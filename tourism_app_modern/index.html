@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>地方観光アクセスマップ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar glass">
+      <div>
+        <p class="eyebrow">Local Tourism Navigator</p>
+        <h1>地方観光アクセスマップ</h1>
+      </div>
+      <button class="icon-button" id="locateBtn" aria-label="全体表示">⌖</button>
+    </header>
+
+    <section class="floating-search glass">
+      <span class="search-icon">⌕</span>
+      <input id="searchInput" type="text" placeholder="観光地を検索（最初はリスト表示しません）" />
+      <button id="clearSearchBtn" class="clear-button" aria-label="検索をクリア">×</button>
+    </section>
+
+    <section class="floating-chips">
+      <button class="chip active" data-filter="all">すべて</button>
+      <button class="chip" data-filter="good">行きやすい</button>
+      <button class="chip" data-filter="mid">やや不便</button>
+      <button class="chip" data-filter="hard">要代替手段</button>
+    </section>
+
+    <div id="map"></div>
+
+    <aside class="legend glass">
+      <div class="legend-row"><span class="dot dot-spot"></span>観光地</div>
+      <div class="legend-row"><span class="dot dot-station"></span>駅・停留所</div>
+      <div class="legend-row"><span class="line-sample"></span>路線</div>
+    </aside>
+
+    <section id="emptyState" class="empty-state glass">
+      <h2>地図上の観光地を選択</h2>
+      <p>観光地を最初から一覧表示せず、地図上から直接選ぶUIにしています。マーカーをタップするとアクセス評価と詳細が出ます。</p>
+    </section>
+
+    <section id="detailSheet" class="detail-sheet glass hidden" aria-live="polite">
+      <div class="sheet-handle"></div>
+      <div class="sheet-head">
+        <div>
+          <p id="sheetTag" class="sheet-tag">アクセス評価</p>
+          <h2 id="sheetTitle">観光地名</h2>
+        </div>
+        <button id="closeSheetBtn" class="icon-button" aria-label="閉じる">×</button>
+      </div>
+      <p id="sheetSummary" class="sheet-summary"></p>
+      <div class="metric-grid">
+        <article class="metric-card">
+          <span class="metric-label">最寄り交通</span>
+          <strong id="nearestStopValue">-</strong>
+        </article>
+        <article class="metric-card">
+          <span class="metric-label">徒歩相当</span>
+          <strong id="walkMinutesValue">-</strong>
+        </article>
+        <article class="metric-card">
+          <span class="metric-label">直線距離</span>
+          <strong id="distanceValue">-</strong>
+        </article>
+        <article class="metric-card">
+          <span class="metric-label">代替手段</span>
+          <strong id="alternativeValue">-</strong>
+        </article>
+      </div>
+      <div class="detail-section">
+        <h3>見立て</h3>
+        <p id="insightText"></p>
+      </div>
+      <div class="detail-section">
+        <h3>評価基準</h3>
+        <p>現段階ではCSVから算出できる最寄り駅・停留所までの距離を中心に、徒歩到達の現実性を可視化しています。待ち時間や乗換回数は今後 Routes API / GTFS 連携で拡張できます。</p>
+      </div>
+    </section>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="js/data.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
