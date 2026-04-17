@@ -71,3 +71,10 @@ h1 {
   align-items: center;
   gap: 8px;
 }
+
+#map {
+  flex: 1;
+  height: 500px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}

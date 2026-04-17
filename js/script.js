@@ -5,7 +5,9 @@ const spots = [
     access: "×",
     reason: "最寄り交通機関から距離があり、不便です。",
     nearest: "矢島駅",
-    alternative: "タクシー利用を推奨"
+    alternative: "タクシー利用を推奨",
+    lat: 39.10803319918925,
+    lng: 140.15929555655893
   },
   {
     name: "鳥海山木のおもちゃ館",
@@ -13,7 +15,9 @@ const spots = [
     access: "△",
     reason: "移動は可能ですが、乗り換えや移動時間がやや多いです。",
     nearest: "鮎川駅",
-    alternative: "鉄道利用"
+    alternative: "鉄道利用",
+    lat: 39.33378776522905, 
+    lng: 140.06587322655378
   },
   {
     name: "鳥海高原矢島スキー場",
@@ -21,12 +25,13 @@ const spots = [
     access: "△",
     reason: "移動は可能ですが、乗り換えや移動時間がやや多いです。",
     nearest: "濁川バス停",
-    alternative: "バス利用"
+    alternative: "バス利用",
+    lat: 39.19035400335526,
+    lng: 140.09311791708552
   }
 ];
 
 const spotList = document.getElementById("spotList");
-const detail = document.getElementById("detail");
 
 spots.forEach((spot) => {
   const div = document.createElement("div");
@@ -57,6 +62,18 @@ spots.forEach((spot) => {
   });
 
   spotList.appendChild(div);
+});
+
+const map = L.map("map").setView([39.3900, 140.0500], 10);
+
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  attribution: "&copy; OpenStreetMap contributors"
+}).addTo(map);
+
+spots.forEach((spot) => {
+  L.marker([spot.lat, spot.lng])
+    .addTo(map)
+    .bindPopup(spot.name);
 });
 
 function getBadgeClass(access) {

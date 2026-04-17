@@ -1,5 +1,9 @@
 <!DOCTYPE html>
 <html lang="ja">
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet/dist/leaflet.css"
+/>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,18 +11,14 @@
   <link rel="stylesheet" href="css/style.css" />
 </head>
 
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <body>
   <h1>観光アクセスガイド</h1>
 
   <div class="container">
     <div class="spot-list" id="spotList"></div>
-
-    <div class="detail" id="detail">
-      <h2>観光地を選んでください</h2>
-      <p>ここに詳細が表示されます。</p>
-    </div>
+    <div id="map"></div>
   </div>
-
   <script src="js/script.js"></script>
 </body>
 </html>
