@@ -1,0 +1,64 @@
+import { ROUTE_SHAPE_OVERRIDES } from '../data/route-shapes.js';
+
+export function buildRoutesWithStops(routes, stops, stopRouteLinks) {
+  const stopsById = new Map(stops.map((stop) => [stop.id, stop]));
+  const stopLinksByRouteId = groupStopLinksByRouteId(stopRouteLinks);
+
+  return routes.map((route) => {
+    const orderedStops = (stopLinksByRouteId.get(route.id) || [])
+      .sort((left, right) => left.stopOrder - right.stopOrder)
+      .map((link) => stopsById.get(link.stopId))
+      .filter(Boolean);
+
+    return {
+      ...route,
+      stops: orderedStops,
+      path: buildRoutePath(route.id, orderedStops)
+    };
+  });
+}
+
+export function buildRoutesByStopId(routesWithStops) {
+  const map = new Map();
+
+  routesWithStops.forEach((route) => {
+    route.stops.forEach((stop) => {
+      const list = map.get(stop.id) || [];
+      list.push(route);
+      map.set(stop.id, list);
+    });
+  });
+
+  return map;
+}
+
+function groupStopLinksByRouteId(stopRouteLinks) {
+  const groups = new Map();
+
+  stopRouteLinks.forEach((link) => {
+    const list = groups.get(link.routeId) || [];
+    list.push(link);
+    groups.set(link.routeId, list);
+  });
+
+  return groups;
+}
+
+function buildRoutePath(routeId, orderedStops) {
+  if (!orderedStops.length) {
+    return [];
+  }
+
+  const defaultPath = orderedStops.map((stop) => [stop.lat, stop.lon]);
+  const controlPoints = ROUTE_SHAPE_OVERRIDES[routeId];
+
+  if (!controlPoints || controlPoints.length === 0) {
+    return defaultPath;
+  }
+
+  const firstPoint = defaultPath[0];
+  const lastPoint = defaultPath[defaultPath.length - 1];
+  const overridePath = controlPoints.map((point) => [point.lat, point.lon]);
+
+  return [firstPoint, ...overridePath, lastPoint];
+}

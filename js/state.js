@@ -1,1 +1,6 @@
-window.APP_STATE = { selectedSpotId: null, query: "", filter: "all", map: null, markers: new Map(), stopMarkers: [], routeLayers: [] };
+export const state = {
+  searchText: '',
+  activeFilterId: 'all',
+  selectedSpotId: null,
+  areRoutesVisible: true
+};
