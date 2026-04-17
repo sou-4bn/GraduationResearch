@@ -1,105 +1,72 @@
-import { state } from './state.js';
-import { loadDataset } from './services/dataset.js';
-import { buildRoutesWithStops, buildRoutesByStopId } from './services/route-builder.js';
-import { buildSpotAssessment } from './services/access-evaluator.js';
-import { createMapView } from './ui/map-view.js';
-import { createDetailSheet } from './ui/sheet-view.js';
-import { renderFilterChips } from './ui/filter-bar.js';
+import { DATASET } from './data/index.js';
+import { buildAppData, enrichSpotsForStartPoint, FILTERS } from './core.js';
+import { createUI } from './ui.js';
 
-const dataset = loadDataset();
-const routesWithStops = buildRoutesWithStops(dataset.routes, dataset.stops, dataset.stopRouteLinks);
-const routesByStopId = buildRoutesByStopId(routesWithStops);
+const baseData = buildAppData(DATASET);
 
-const enrichedSpots = dataset.spots.map((spot) => ({
-  ...spot,
-  meta: dataset.spotMeta[spot.id] || {},
-  assessment: buildSpotAssessment(spot, dataset.stops, routesByStopId)
-}));
+const state = {
+  activeFilterId: 'all',
+  selectedSpotId: null,
+  areRoutesVisible: true,
+  startPointId: baseData.startPoints[0]?.stopId || ''
+};
 
-const mapView = createMapView('map');
-const detailSheet = createDetailSheet(
-  document.getElementById('detail-sheet'),
-  document.getElementById('detail-content'),
-  document.getElementById('sheet-close-button')
-);
-
-const searchInput = document.getElementById('spot-search');
-const chipsContainer = document.getElementById('filter-chips');
-const toggleRoutesButton = document.getElementById('toggle-routes-button');
+const ui = createUI({
+  containerId: 'map',
+  filters: FILTERS,
+  startPoints: baseData.startPoints,
+  onFilterChange: handleFilterChange,
+  onSpotClick: handleSpotClick,
+  onStartPointChange: handleStartPointChange
+});
 
 initialize();
 
 function initialize() {
-  mapView.renderRoutes(routesWithStops);
-  mapView.renderStops(dataset.stops);
-  renderFilterChips(chipsContainer, state.activeFilterId, handleFilterChange);
-  renderSpotMarkers();
-  wireEvents();
+  ui.renderRoutes(baseData.routes);
+  ui.renderStops(baseData.stops);
+  ui.renderFilter(state.activeFilterId);
+  ui.renderStartPoints(state.startPointId);
+  renderSpots();
+
+  ui.elements.toggleRoutesButton.addEventListener('click', () => {
+    state.areRoutesVisible = !state.areRoutesVisible;
+    ui.setRoutesVisible(state.areRoutesVisible);
+  });
+
+  ui.setRoutesVisible(state.areRoutesVisible);
 }
 
-function wireEvents() {
-  searchInput.addEventListener('input', (event) => {
-    state.searchText = event.currentTarget.value.trim();
-    renderSpotMarkers();
-  });
+function renderSpots() {
+  const enriched = enrichSpotsForStartPoint(baseData.spots, state.startPointId, baseData.context);
+  const filtered = enriched.filter((spot) => state.activeFilterId === 'all' || spot.assessment.scoreId === state.activeFilterId);
+  ui.renderSpots(filtered);
+  ui.renderSummary(filtered, enriched, state.startPointId);
 
-  toggleRoutesButton.addEventListener('click', () => {
-    state.areRoutesVisible = !state.areRoutesVisible;
-    mapView.setRoutesVisible(state.areRoutesVisible);
-    toggleRoutesButton.textContent = state.areRoutesVisible ? '路線' : '路線 off';
-  });
+  if (state.selectedSpotId) {
+    const selected = enriched.find((spot) => spot.id === state.selectedSpotId);
+    if (selected) {
+      ui.showSpotDetails(selected);
+      return;
+    }
+  }
+
+  ui.clearSpotDetails();
 }
 
 function handleFilterChange(filterId) {
   state.activeFilterId = filterId;
-  renderFilterChips(chipsContainer, state.activeFilterId, handleFilterChange);
-  renderSpotMarkers();
+  ui.renderFilter(state.activeFilterId);
+  renderSpots();
 }
 
-function renderSpotMarkers() {
-  const visibleSpots = getVisibleSpots(enrichedSpots, state.searchText, state.activeFilterId);
-
-  mapView.renderSpots(visibleSpots, (spotView) => {
-    state.selectedSpotId = spotView.id;
-    mapView.focusSpot(spotView);
-    detailSheet.show(spotView);
-  });
+function handleStartPointChange(startPointId) {
+  state.startPointId = startPointId;
+  renderSpots();
 }
 
-function getVisibleSpots(spots, searchText, activeFilterId) {
-  return spots.filter((spot) => matchesSearch(spot, searchText) && matchesFilter(spot, activeFilterId));
-}
-
-function matchesSearch(spot, searchText) {
-  if (!searchText) {
-    return true;
-  }
-
-  const normalizedSearchText = searchText.toLowerCase();
-  const haystack = [spot.name, spot.meta.summary, ...(spot.meta.tags || [])]
-    .filter(Boolean)
-    .join(' ')
-    .toLowerCase();
-
-  return haystack.includes(normalizedSearchText);
-}
-
-function matchesFilter(spot, activeFilterId) {
-  if (activeFilterId === 'all') {
-    return true;
-  }
-
-  if (['excellent', 'good', 'fair', 'poor'].includes(activeFilterId)) {
-    return spot.assessment.scoreId === activeFilterId;
-  }
-
-  if (activeFilterId === 'rail') {
-    return spot.assessment.nearestStop.stop.type === 'train';
-  }
-
-  if (activeFilterId === 'bus') {
-    return spot.assessment.nearestStop.stop.type === 'bus';
-  }
-
-  return true;
+function handleSpotClick(spot) {
+  state.selectedSpotId = spot.id;
+  ui.focusSpot(spot);
+  ui.showSpotDetails(spot);
 }
