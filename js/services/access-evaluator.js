@@ -1,24 +1,25 @@
-import { ACCESS_THRESHOLDS_KM, WALKING_SPEED_KM_PER_HOUR } from '../constants.js';
+import {
+  ACCESS_THRESHOLDS_KM,
+  SCORE_LABELS,
+  WALKING_SPEED_KM_PER_HOUR
+} from '../constants.js';
 import { haversineDistanceKm } from '../utils/geo.js';
 
 export function buildSpotAssessment(spot, stops, routesById) {
   const nearestStop = findNearestStop(spot, stops);
   const nearestRailStop = findNearestStopByType(spot, stops, 'train');
   const nearestBusStop = findNearestStopByType(spot, stops, 'bus');
-
-  const walkingMinutes = (nearestStop.distanceKm / WALKING_SPEED_KM_PER_HOUR) * 60;
   const scoreId = getScoreId(nearestStop.distanceKm);
-  const suggestedTransport = scoreId === 'poor' ? 'alternative' : 'public';
 
   return {
     spotId: spot.id,
     nearestStop,
     nearestRailStop,
     nearestBusStop,
-    walkingMinutes,
+    walkingMinutes: convertDistanceToWalkingMinutes(nearestStop.distanceKm),
     scoreId,
-    scoreLabel: getScoreLabel(scoreId),
-    suggestedTransport,
+    scoreLabel: SCORE_LABELS[scoreId],
+    suggestedTransport: scoreId === 'poor' ? 'alternative' : 'public',
     availableRouteNames: collectRouteNames(nearestStop.stop.id, routesById)
   };
 }
@@ -34,7 +35,7 @@ function findNearestStop(spot, stops) {
 
 function findNearestStopByType(spot, stops, type) {
   const typedStops = stops.filter((stop) => stop.type === type);
-  return typedStops.length ? findNearestStop(spot, typedStops) : null;
+  return typedStops.length > 0 ? findNearestStop(spot, typedStops) : null;
 }
 
 function getScoreId(distanceKm) {
@@ -53,15 +54,8 @@ function getScoreId(distanceKm) {
   return 'poor';
 }
 
-function getScoreLabel(scoreId) {
-  const labels = {
-    excellent: '◎',
-    good: '○',
-    fair: '△',
-    poor: '×'
-  };
-
-  return labels[scoreId];
+function convertDistanceToWalkingMinutes(distanceKm) {
+  return (distanceKm / WALKING_SPEED_KM_PER_HOUR) * 60;
 }
 
 function collectRouteNames(stopId, routesById) {

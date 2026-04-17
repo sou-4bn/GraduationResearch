@@ -1,4 +1,6 @@
+import { SCORE_TEXTS } from '../constants.js';
 import { formatDistance, formatMinutes } from '../utils/format.js';
+import { escapeHtml } from '../utils/html.js';
 
 export function createDetailSheet(sheetElement, contentElement, closeButton) {
   closeButton.addEventListener('click', () => {
@@ -19,73 +21,61 @@ export function createDetailSheet(sheetElement, contentElement, closeButton) {
 function buildDetailMarkup(spotView) {
   const { assessment, meta } = spotView;
   const scoreClass = assessment.scoreId;
-  const nearestRail = assessment.nearestRailStop
-    ? `${assessment.nearestRailStop.stop.name} / ${formatDistance(assessment.nearestRailStop.distanceKm)}`
-    : '—';
-  const nearestBus = assessment.nearestBusStop
-    ? `${assessment.nearestBusStop.stop.name} / ${formatDistance(assessment.nearestBusStop.distanceKm)}`
-    : '—';
-  const summary = meta.summary || '';
-  const tags = (meta.tags || []).map((tag) => `<span class="tag">${tag}</span>`).join('');
+  const nearestRail = formatNearestStop(assessment.nearestRailStop);
+  const nearestBus = formatNearestStop(assessment.nearestBusStop);
+  const summary = meta.summary ? `<p class="summary-text">${escapeHtml(meta.summary)}</p>` : '';
+  const tags = buildTagMarkup(meta.tags || []);
   const photosMarkup = buildPhotoMarkup(meta.photos || []);
+  const spotInfoMarkup = buildSpotInfoMarkup(meta);
 
   return `
     <div class="detail-layout">
       <div class="detail-main">
         <div class="spot-title-row">
           <div>
-            <h2 class="spot-title">${spotView.name}</h2>
-            ${summary ? `<p class="summary-text">${summary}</p>` : ''}
+            <h2 class="spot-title">${escapeHtml(spotView.name)}</h2>
+            ${summary}
           </div>
           <div class="score-pill ${scoreClass}">
-            <span>${assessment.scoreLabel}</span>
-            <span>${getScoreText(assessment.scoreId)}</span>
+            <span>${escapeHtml(assessment.scoreLabel)}</span>
+            <span>${escapeHtml(SCORE_TEXTS[assessment.scoreId])}</span>
           </div>
         </div>
 
         <div class="meta-grid">
           <article class="meta-card">
             <p class="label">最寄り交通</p>
-            <p class="value">${assessment.nearestStop.stop.name}</p>
-            <p class="subvalue">${formatDistance(assessment.nearestStop.distanceKm)}</p>
+            <p class="value">${escapeHtml(assessment.nearestStop.stop.name)}</p>
+            <p class="subvalue">${escapeHtml(formatDistance(assessment.nearestStop.distanceKm))}</p>
           </article>
           <article class="meta-card">
             <p class="label">徒歩目安</p>
-            <p class="value">${formatMinutes(assessment.walkingMinutes)}</p>
+            <p class="value">${escapeHtml(formatMinutes(assessment.walkingMinutes))}</p>
             <p class="subvalue">直線距離換算</p>
           </article>
           <article class="meta-card">
             <p class="label">鉄道最寄り</p>
-            <p class="value">${nearestRail}</p>
+            <p class="value">${escapeHtml(nearestRail)}</p>
             <p class="subvalue">路線参考</p>
           </article>
           <article class="meta-card">
             <p class="label">バス最寄り</p>
-            <p class="value">${nearestBus}</p>
+            <p class="value">${escapeHtml(nearestBus)}</p>
             <p class="subvalue">路線参考</p>
           </article>
         </div>
 
-        ${tags ? `<div class="tag-row">${tags}</div>` : ''}
-
+        ${tags}
         ${photosMarkup}
       </div>
 
       <div class="detail-side">
         <article class="side-card">
           <p class="label">交通メモ</p>
-          <p>${buildTransportMemo(assessment)}</p>
+          <p>${escapeHtml(buildTransportMemo(assessment))}</p>
         </article>
 
-        ${meta.hours || meta.parking || meta.notes || meta.website ? `
-          <article class="side-card">
-            <p class="label">スポット情報</p>
-            ${meta.hours ? `<p><strong>営業時間:</strong> ${meta.hours}</p>` : ''}
-            ${meta.parking ? `<p><strong>駐車場:</strong> ${meta.parking}</p>` : ''}
-            ${meta.notes ? `<p><strong>備考:</strong> ${meta.notes}</p>` : ''}
-            ${meta.website ? `<p><a href="${meta.website}" target="_blank" rel="noreferrer">公式サイト</a></p>` : ''}
-          </article>
-        ` : ''}
+        ${spotInfoMarkup}
 
         <div class="action-grid">
           <article class="action-card">
@@ -101,6 +91,37 @@ function buildDetailMarkup(spotView) {
         </div>
       </div>
     </div>
+  `;
+}
+
+function formatNearestStop(nearestStop) {
+  return nearestStop
+    ? `${nearestStop.stop.name} / ${formatDistance(nearestStop.distanceKm)}`
+    : '—';
+}
+
+function buildTagMarkup(tags) {
+  if (tags.length === 0) {
+    return '';
+  }
+
+  const markup = tags.map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join('');
+  return `<div class="tag-row">${markup}</div>`;
+}
+
+function buildSpotInfoMarkup(meta) {
+  if (!meta.hours && !meta.parking && !meta.notes && !meta.website) {
+    return '';
+  }
+
+  return `
+    <article class="side-card">
+      <p class="label">スポット情報</p>
+      ${meta.hours ? `<p><strong>営業時間:</strong> ${escapeHtml(meta.hours)}</p>` : ''}
+      ${meta.parking ? `<p><strong>駐車場:</strong> ${escapeHtml(meta.parking)}</p>` : ''}
+      ${meta.notes ? `<p><strong>備考:</strong> ${escapeHtml(meta.notes)}</p>` : ''}
+      ${meta.website ? `<p><a href="${escapeHtml(meta.website)}" target="_blank" rel="noreferrer">公式サイト</a></p>` : ''}
+    </article>
   `;
 }
 
@@ -152,22 +173,4 @@ function buildTaxiSearchUrl(spotView) {
 
 function buildRentalSearchUrl(spotView) {
   return `https://www.google.com/search?q=${encodeURIComponent(`由利本荘 レンタカー ${spotView.name}`)}`;
-}
-
-function getScoreText(scoreId) {
-  return {
-    excellent: '行きやすい',
-    good: '比較的行きやすい',
-    fair: '工夫が必要',
-    poor: '代替移動向き'
-  }[scoreId];
-}
-
-function escapeHtml(value) {
-  return String(value)
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#39;');
 }

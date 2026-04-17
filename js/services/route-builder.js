@@ -1,5 +1,3 @@
-import { ROUTE_SHAPE_OVERRIDES } from '../data/route-shapes.js';
-
 export function buildRoutesWithStops(routes, stops, stopRouteLinks) {
   const stopsById = new Map(stops.map((stop) => [stop.id, stop]));
   const stopLinksByRouteId = groupStopLinksByRouteId(stopRouteLinks);
@@ -13,7 +11,7 @@ export function buildRoutesWithStops(routes, stops, stopRouteLinks) {
     return {
       ...route,
       stops: orderedStops,
-      path: buildRoutePath(route.id, orderedStops)
+      path: buildRoutePath(orderedStops)
     };
   });
 }
@@ -44,21 +42,6 @@ function groupStopLinksByRouteId(stopRouteLinks) {
   return groups;
 }
 
-function buildRoutePath(routeId, orderedStops) {
-  if (!orderedStops.length) {
-    return [];
-  }
-
-  const defaultPath = orderedStops.map((stop) => [stop.lat, stop.lon]);
-  const controlPoints = ROUTE_SHAPE_OVERRIDES[routeId];
-
-  if (!controlPoints || controlPoints.length === 0) {
-    return defaultPath;
-  }
-
-  const firstPoint = defaultPath[0];
-  const lastPoint = defaultPath[defaultPath.length - 1];
-  const overridePath = controlPoints.map((point) => [point.lat, point.lon]);
-
-  return [firstPoint, ...overridePath, lastPoint];
+function buildRoutePath(orderedStops) {
+  return orderedStops.map((stop) => [stop.lat, stop.lon]);
 }
