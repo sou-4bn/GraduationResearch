@@ -1,37 +1,42 @@
 const spots = [
   {
     name: "法体の滝",
-    description: "日本の滝百選にも選ばれていて、滝つぼ周辺は広い園地になっているほか、滝の上流部の「玉田渓谷」は、「甌穴」をはじめ見所いっぱいのトレッキングコースになっています。",
+    description: "鳥海山の麓に位置し、三段にわたって流れ落ちるダイナミックな景観と映画のロケ地にもなった美しい自然が魅力の名瀑です。",
     access: "×",
-    reason: "最寄り交通機関から距離があり、不便です。",
-    nearest: "矢島駅",
+    reason: "",
+    nearest: "なし",
     alternative: "タクシー利用を推奨",
     lat: 39.10803319918925,
     lng: 140.15929555655893
   },
   {
-    name: "鳥海山木のおもちゃ館",
-    description: "鳥海山 木のおもちゃ館は、国登録有形文化財であり地域の方に長年愛され、守られ続けてきた「旧鮎川小学校」をそのままの形で残しながら、2018年7月に設立されました。",
+    name: "桑ノ木台湿原",
+    description: "鳥海山の山麓に広がる広大な湿原で、初夏のレンゲツツジや秋の草紅葉など、季節ごとに移ろう神秘的な絶景を堪能できる由利本荘市屈指の景勝地です。",
     access: "△",
-    reason: "移動は可能ですが、乗り換えや移動時間がやや多いです。",
-    nearest: "鮎川駅",
-    alternative: "鉄道利用",
-    lat: 39.33378776522905, 
-    lng: 140.06587322655378
+    reason: "",
+    nearest: "なし",
+    alternative: "タクシー利用を推奨",
+    lat: 39.17299025422298,
+    lng: 140.04624151120456
   },
   {
-    name: "鳥海高原矢島スキー場",
-    description: "全部で６つのコースがあり、最長コースは1,300m。初級者から上級者まで楽しめる設計となっています。",
-    access: "△",
-    reason: "移動は可能ですが、乗り換えや移動時間がやや多いです。",
-    nearest: "濁川バス停",
-    alternative: "バス利用",
-    lat: 39.19035400335526,
-    lng: 140.09311791708552
+    name: "本荘公園",
+    description: "本荘藩主六郷氏の居城であった本荘城跡に広がる公園で、春には約1,000本の桜やツツジが咲き誇り、歴史の面影を感じながら四季折々の散策を楽しめる由利本荘市のシンボル的スポットです。",
+    access: "〇",
+    reason: "",
+    nearest: "羽後本荘駅",
+    alternative: "鉄道利用",
+    lat: 39.38471267927984,
+    lng: 140.0477778265553
   }
 ];
 
 const spotList = document.getElementById("spotList");
+const map = L.map("map").setView([39.38586, 140.04883], 10);
+
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  attribution: "&copy; OpenStreetMap contributors"
+}).addTo(map);
 
 spots.forEach((spot) => {
   const div = document.createElement("div");
@@ -46,8 +51,6 @@ spots.forEach((spot) => {
   `;
 
   div.addEventListener("click", () => {
-    const badgeClass = getBadgeClass(spot.access);
-
     detail.innerHTML = `
       <h2>${spot.name}</h2>
       <p>${spot.description}</p>
@@ -62,22 +65,14 @@ spots.forEach((spot) => {
   });
 
   spotList.appendChild(div);
-});
 
-const map = L.map("map").setView([39.3900, 140.0500], 10);
-
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  attribution: "&copy; OpenStreetMap contributors"
-}).addTo(map);
-
-spots.forEach((spot) => {
   L.marker([spot.lat, spot.lng])
     .addTo(map)
     .bindPopup(spot.name);
 });
 
 function getBadgeClass(access) {
-  if (access === "◎") {
+  if (access === "〇") {
     return "good";
   }
   if (access === "△") {
