@@ -12,6 +12,7 @@ const ROUTE_COLORS = {
   bus: '#1DA57A'
 };
 
+<<<<<<< HEAD
 export function createUI({ containerId, filters, startPoints, onFilterChange, onSpotClick, onStartPointChange }) {
   const elements = {
     chipsContainer: document.getElementById('filter-chips'),
@@ -21,6 +22,16 @@ export function createUI({ containerId, filters, startPoints, onFilterChange, on
     detailContent: document.getElementById('detail-content'),
     sheetCloseButton: document.getElementById('sheet-close-button'),
     summaryText: document.getElementById('summary-text')
+=======
+export function createUI(containerId, filters, onFilterChange, onSpotClick) {
+  const elements = {
+    searchInput: document.getElementById('spot-search'),
+    chipsContainer: document.getElementById('filter-chips'),
+    toggleRoutesButton: document.getElementById('toggle-routes-button'),
+    detailSheet: document.getElementById('detail-sheet'),
+    detailContent: document.getElementById('detail-content'),
+    sheetCloseButton: document.getElementById('sheet-close-button')
+>>>>>>> 02eb3690a706c92e48c26f23adcf32750a142e3d
   };
 
   const map = L.map(containerId, {
@@ -38,12 +49,16 @@ export function createUI({ containerId, filters, startPoints, onFilterChange, on
     spots: L.layerGroup().addTo(map)
   };
 
+<<<<<<< HEAD
   const rendered = { spotMarkers: [] };
 
+=======
+>>>>>>> 02eb3690a706c92e48c26f23adcf32750a142e3d
   elements.sheetCloseButton.addEventListener('click', () => {
     elements.detailSheet.classList.add('is-collapsed');
   });
 
+<<<<<<< HEAD
   elements.startPointSelect.addEventListener('change', (event) => {
     onStartPointChange(event.currentTarget.value);
   });
@@ -57,19 +72,45 @@ export function createUI({ containerId, filters, startPoints, onFilterChange, on
       layers.routes.clearLayers();
       routes.forEach((route) => {
         if (!route.path || route.path.length < 2) {
+=======
+  renderFilterChips(elements.chipsContainer, filters, 'all', onFilterChange);
+
+  return {
+    elements,
+    renderFilter(activeFilterId) {
+      renderFilterChips(elements.chipsContainer, filters, activeFilterId, onFilterChange);
+    },
+    renderRoutes(routes) {
+      layers.routes.clearLayers();
+      routes.forEach((route) => {
+        if (route.path.length < 2) {
+>>>>>>> 02eb3690a706c92e48c26f23adcf32750a142e3d
           return;
         }
 
         L.polyline(route.path, {
+<<<<<<< HEAD
           color: ROUTE_COLORS[route.type] || '#718096',
           weight: route.type === 'train' ? 4 : 3,
           opacity: 0.72
         }).bindTooltip(route.name).addTo(layers.routes);
+=======
+          color: ROUTE_COLORS[route.type] || '#4b6b88',
+          weight: route.type === 'train' ? 5 : 4,
+          opacity: 0.82,
+          dashArray: route.type === 'bus' ? '8 10' : null,
+          lineCap: 'round',
+          lineJoin: 'round'
+        })
+          .bindTooltip(route.name, { sticky: true })
+          .addTo(layers.routes);
+>>>>>>> 02eb3690a706c92e48c26f23adcf32750a142e3d
       });
     },
     renderStops(stops) {
       layers.stops.clearLayers();
       stops.forEach((stop) => {
+<<<<<<< HEAD
         L.circleMarker([stop.lat, stop.lon], {
           radius: stop.type === 'train' ? 4 : 3,
           color: stop.type === 'train' ? '#3b4cca' : '#168463',
@@ -77,10 +118,23 @@ export function createUI({ containerId, filters, startPoints, onFilterChange, on
           fillColor: '#ffffff',
           fillOpacity: 0.9
         }).bindTooltip(stop.name).addTo(layers.stops);
+=======
+        const isTrain = stop.type === 'train';
+        L.circleMarker([stop.lat, stop.lon], {
+          radius: isTrain ? 5 : 4,
+          weight: 2,
+          color: 'white',
+          fillColor: isTrain ? '#5B6CFF' : '#1DA57A',
+          fillOpacity: 0.9
+        })
+          .bindTooltip(stop.name, { sticky: true })
+          .addTo(layers.stops);
+>>>>>>> 02eb3690a706c92e48c26f23adcf32750a142e3d
       });
     },
     renderSpots(spots) {
       layers.spots.clearLayers();
+<<<<<<< HEAD
       rendered.spotMarkers = [];
 
       spots.forEach((spot) => {
@@ -115,10 +169,39 @@ export function createUI({ containerId, filters, startPoints, onFilterChange, on
         poor: visibleSpots.filter((spot) => spot.assessment.scoreId === 'poor').length
       };
       elements.summaryText.textContent = `${startPointLabel} 発で ${allSpots.length} 件中 ${visibleSpots.length} 件を表示中 / ◎ ${counts.excellent}・○ ${counts.moderate}・× ${counts.poor}`;
+=======
+      spots.forEach((spot) => {
+        L.marker([spot.lat, spot.lon], {
+          icon: L.divIcon({
+            className: '',
+            html: `<div class="custom-marker ${spot.assessment.scoreId}"></div>`,
+            iconSize: [20, 20],
+            iconAnchor: [10, 10]
+          })
+        })
+          .bindPopup(`
+            <div class="popup-card">
+              <h3>${escapeHtml(spot.name)}</h3>
+              <p>${escapeHtml(spot.assessment.scoreLabel)} / 最寄り ${escapeHtml(spot.assessment.nearestStop.stop.name)}</p>
+            </div>
+          `)
+          .on('click', () => onSpotClick(spot))
+          .addTo(layers.spots);
+      });
+    },
+    setRoutesVisible(visible) {
+      toggleLayer(map, layers.routes, visible);
+      toggleLayer(map, layers.stops, visible);
+      elements.toggleRoutesButton.textContent = visible ? '路線表示中' : '路線非表示';
+    },
+    focusSpot(spot) {
+      map.flyTo([spot.lat, spot.lon], 12, { duration: 0.8 });
+>>>>>>> 02eb3690a706c92e48c26f23adcf32750a142e3d
     },
     showSpotDetails(spot) {
       elements.detailContent.innerHTML = buildDetailMarkup(spot);
       elements.detailSheet.classList.remove('is-collapsed');
+<<<<<<< HEAD
     },
     clearSpotDetails() {
       elements.detailContent.innerHTML = '<p class="placeholder-text">観光地を選ぶと、評価理由と代替手段が表示されます。</p>';
@@ -130,10 +213,13 @@ export function createUI({ containerId, filters, startPoints, onFilterChange, on
     },
     focusSpot(spot) {
       map.flyTo([spot.lat, spot.lon], Math.max(map.getZoom(), 12), { duration: 0.6 });
+=======
+>>>>>>> 02eb3690a706c92e48c26f23adcf32750a142e3d
     }
   };
 }
 
+<<<<<<< HEAD
 function renderFilterChips(container, filters, onFilterChange) {
   container.innerHTML = filters
     .map((filter) => `<button class="chip" type="button" data-filter-id="${escapeHtml(filter.id)}">${escapeHtml(filter.label)}</button>`)
@@ -170,23 +256,48 @@ function buildDetailMarkup(spot) {
   const issueItems = assessment.triggeredIssues.length
     ? assessment.triggeredIssues.map((issue) => `<li>${escapeHtml(issue)}</li>`).join('')
     : '<li>大きな不便条件は見当たりません</li>';
+=======
+function renderFilterChips(container, filters, activeFilterId, onChange) {
+  container.innerHTML = '';
+  filters.forEach((filter) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = `chip${filter.id === activeFilterId ? ' is-active' : ''}`;
+    button.textContent = filter.label;
+    button.addEventListener('click', () => onChange(filter.id));
+    container.appendChild(button);
+  });
+}
+
+function buildDetailMarkup(spot) {
+  const { assessment, meta } = spot;
+  const routeText = assessment.availableRouteNames.length > 0 ? assessment.availableRouteNames.join(' / ') : '該当なし';
+>>>>>>> 02eb3690a706c92e48c26f23adcf32750a142e3d
 
   return `
     <div class="detail-layout">
       <div class="detail-main">
         <div class="spot-title-row">
           <div>
+<<<<<<< HEAD
             <p class="eyebrow small">Tourism Spot</p>
             <h2 class="spot-title">${escapeHtml(spot.name)}</h2>
             ${meta.summary ? `<p class="summary-text">${escapeHtml(meta.summary)}</p>` : ''}
           </div>
           <div class="score-pill ${escapeHtml(assessment.scoreId)}">
+=======
+            <h2 class="spot-title">${escapeHtml(spot.name)}</h2>
+            ${meta.summary ? `<p class="summary-text">${escapeHtml(meta.summary)}</p>` : ''}
+          </div>
+          <div class="score-pill ${assessment.scoreId}">
+>>>>>>> 02eb3690a706c92e48c26f23adcf32750a142e3d
             <span>${escapeHtml(assessment.scoreLabel)}</span>
             <span>${escapeHtml(assessment.scoreText)}</span>
           </div>
         </div>
 
         <div class="meta-grid compact">
+<<<<<<< HEAD
           ${buildMetaCard('最寄り交通', location.nearestStop.stop.name, formatDistance(location.nearestStop.distanceKm))}
           ${buildMetaCard('乗り換え回数', `${assessment.transferCount} 回`, '出発地点からの目安')}
           ${buildMetaCard('待ち時間合計', formatMinutes(assessment.waitingMinutes), '静的な目安')}
@@ -200,11 +311,19 @@ function buildDetailMarkup(spot) {
           <ul class="issue-list">${issueItems}</ul>
         </article>
 
+=======
+          ${buildMetaCard('最寄り交通', assessment.nearestStop.stop.name, formatDistance(assessment.nearestStop.distanceKm))}
+          ${buildMetaCard('徒歩目安', formatMinutes(assessment.walkingMinutes), '直線距離換算')}
+          ${buildMetaCard('利用路線', routeText, '最寄り停留所基準')}
+        </div>
+
+>>>>>>> 02eb3690a706c92e48c26f23adcf32750a142e3d
         ${buildTagMarkup(meta.tags || [])}
         ${buildPhotoMarkup(meta.photos || [])}
       </div>
 
       <div class="detail-side">
+<<<<<<< HEAD
         <article class="side-card emphasis-card">
           <p class="label">代替手段</p>
           <h3>${escapeHtml(assessment.fallback.title)}</h3>
@@ -214,15 +333,41 @@ function buildDetailMarkup(spot) {
             ${(assessment.fallback.level === 'rental' || assessment.fallback.level === 'either') ? '<a class="action-button secondary" href="https://rental.timescar.jp/" target="_blank" rel="noreferrer">レンタカー情報を開く</a>' : ''}
           </div>
           ${(assessment.fallback.level !== 'none') ? '<p class="caption">外部サービスへ移動します。</p>' : ''}
+=======
+        <article class="side-card">
+          <p class="label">交通メモ</p>
+          <p>${escapeHtml(buildTransportMemo(assessment.scoreId))}</p>
+>>>>>>> 02eb3690a706c92e48c26f23adcf32750a142e3d
         </article>
 
         <article class="side-card">
           <p class="label">最寄り駅・停留所</p>
+<<<<<<< HEAD
           <p><strong>鉄道:</strong> ${escapeHtml(formatNearestStop(location.nearestRailStop))}</p>
           <p><strong>バス:</strong> ${escapeHtml(formatNearestStop(location.nearestBusStop))}</p>
         </article>
 
         ${buildSpotInfoMarkup(meta)}
+=======
+          <p><strong>鉄道:</strong> ${escapeHtml(formatNearestStop(assessment.nearestRailStop))}</p>
+          <p><strong>バス:</strong> ${escapeHtml(formatNearestStop(assessment.nearestBusStop))}</p>
+        </article>
+
+        ${buildSpotInfoMarkup(meta)}
+
+        <div class="action-grid">
+          <article class="action-card">
+            <h3>タクシー</h3>
+            <p>候補検索へ移動</p>
+            <a class="action-button" href="${buildTaxiSearchUrl(spot.name)}" target="_blank" rel="noreferrer">開く</a>
+          </article>
+          <article class="action-card">
+            <h3>レンタカー</h3>
+            <p>候補検索へ移動</p>
+            <a class="action-button" href="${buildRentalSearchUrl(spot.name)}" target="_blank" rel="noreferrer">開く</a>
+          </article>
+        </div>
+>>>>>>> 02eb3690a706c92e48c26f23adcf32750a142e3d
       </div>
     </div>
   `;
@@ -280,6 +425,27 @@ function buildPhotoMarkup(photos) {
   return `<section><p class="photo-label">Photos</p><div class="photo-grid">${cards}</div></section>`;
 }
 
+<<<<<<< HEAD
+=======
+function buildTransportMemo(scoreId) {
+  if (scoreId === 'excellent') {
+    return '公共交通で立ち寄りやすい候補です。';
+  }
+  if (scoreId === 'moderate') {
+    return '公共交通で訪問しやすいですが、時刻確認があると安心です。';
+  }
+  return 'タクシーまたはレンタカーの併用も考えたい候補です。';
+}
+
+function buildTaxiSearchUrl(name) {
+  return `https://www.google.com/search?q=${encodeURIComponent(`由利本荘 タクシー ${name}`)}`;
+}
+
+function buildRentalSearchUrl(name) {
+  return `https://www.google.com/search?q=${encodeURIComponent(`由利本荘 レンタカー ${name}`)}`;
+}
+
+>>>>>>> 02eb3690a706c92e48c26f23adcf32750a142e3d
 function formatDistance(km) {
   return km < 1 ? `${Math.round(km * 1000)} m` : `${km.toFixed(1)} km`;
 }

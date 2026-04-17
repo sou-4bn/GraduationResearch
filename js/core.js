@@ -1,4 +1,5 @@
 const WALKING_SPEED_KM_PER_HOUR = 4.5;
+<<<<<<< HEAD
 const TRANSFER_WALK_THRESHOLD_KM = 0.6;
 const ROUTE_WAIT_MINUTES = {
   train: 18,
@@ -18,13 +19,24 @@ const WAITING_THRESHOLDS_MINUTES = {
 const TRANSFER_THRESHOLDS = {
   good: 1,
   poor: 3
+=======
+const ACCESS_THRESHOLDS_KM = {
+  excellent: 1.0,
+  moderate: 2.5
+>>>>>>> 02eb3690a706c92e48c26f23adcf32750a142e3d
 };
 
 export const FILTERS = [
   { id: 'all', label: 'すべて' },
   { id: 'excellent', label: '◎' },
   { id: 'moderate', label: '○' },
+<<<<<<< HEAD
   { id: 'poor', label: '×' }
+=======
+  { id: 'poor', label: '×' },
+  { id: 'rail', label: '鉄道周辺' },
+  { id: 'bus', label: 'バス周辺' }
+>>>>>>> 02eb3690a706c92e48c26f23adcf32750a142e3d
 ];
 
 export const SCORE_META = {
@@ -35,12 +47,20 @@ export const SCORE_META = {
   },
   moderate: {
     label: '○',
+<<<<<<< HEAD
     text: 'やや行きにくい',
+=======
+    text: 'やや行きやすい',
+>>>>>>> 02eb3690a706c92e48c26f23adcf32750a142e3d
     colorClass: 'moderate'
   },
   poor: {
     label: '×',
+<<<<<<< HEAD
     text: '行きにくい',
+=======
+    text: '代替移動向き',
+>>>>>>> 02eb3690a706c92e48c26f23adcf32750a142e3d
     colorClass: 'poor'
   }
 };
@@ -48,13 +68,18 @@ export const SCORE_META = {
 export function buildAppData(dataset) {
   const routesWithStops = buildRoutesWithStops(dataset.routes, dataset.stops, dataset.stopRouteLinks);
   const routesByStopId = buildRoutesByStopId(routesWithStops);
+<<<<<<< HEAD
   const transferLinks = buildTransferLinks(dataset.stops);
   const startPoints = buildStartPoints(dataset.stops);
   const spots = dataset.spots.map((spot) => buildSpotView(spot, dataset.spotMeta[spot.id] || {}, dataset.stops));
+=======
+  const spots = dataset.spots.map((spot) => buildSpotView(spot, dataset.spotMeta[spot.id] || {}, dataset.stops, routesByStopId));
+>>>>>>> 02eb3690a706c92e48c26f23adcf32750a142e3d
 
   return {
     routes: routesWithStops,
     stops: dataset.stops,
+<<<<<<< HEAD
     startPoints,
     spots,
     context: {
@@ -73,6 +98,14 @@ export function enrichSpotsForStartPoint(spots, startPointId, context) {
 
 export function filterSpots(spots, state) {
   return spots.filter((spot) => matchesFilter(spot, state.activeFilterId));
+=======
+    spots
+  };
+}
+
+export function filterSpots(spots, state) {
+  return spots.filter((spot) => matchesSearch(spot, state.searchText) && matchesFilter(spot, state.activeFilterId));
+>>>>>>> 02eb3690a706c92e48c26f23adcf32750a142e3d
 }
 
 function buildRoutesWithStops(routes, stops, stopRouteLinks) {
@@ -113,6 +146,7 @@ function buildRoutesByStopId(routes) {
   return map;
 }
 
+<<<<<<< HEAD
 function buildTransferLinks(stops) {
   const links = new Map(stops.map((stop) => [stop.id, []]));
 
@@ -168,11 +202,28 @@ function buildSpotAssessment(spot, startPointId, context) {
   const transferCount = pathAnalysis ? pathAnalysis.transferCount : 0;
   const triggeredIssues = buildTriggeredIssues({ transferCount, waitingMinutes, walkingMinutes });
   const scoreId = getScoreId(triggeredIssues.length);
+=======
+function buildSpotView(spot, meta, stops, routesByStopId) {
+  const assessment = buildSpotAssessment(spot, stops, routesByStopId);
+  return {
+    ...spot,
+    meta,
+    assessment
+  };
+}
+
+function buildSpotAssessment(spot, stops, routesByStopId) {
+  const nearestStop = findNearestStop(spot, stops);
+  const nearestRailStop = findNearestStop(spot, stops.filter((stop) => stop.type === 'train'));
+  const nearestBusStop = findNearestStop(spot, stops.filter((stop) => stop.type === 'bus'));
+  const scoreId = getScoreId(nearestStop.distanceKm);
+>>>>>>> 02eb3690a706c92e48c26f23adcf32750a142e3d
 
   return {
     scoreId,
     scoreLabel: SCORE_META[scoreId].label,
     scoreText: SCORE_META[scoreId].text,
+<<<<<<< HEAD
     startStopId,
     nearestStop: spot.location.nearestStop,
     nearestRailStop: spot.location.nearestRailStop,
@@ -351,14 +402,72 @@ function matchesFilter(spot, filterId) {
   return spot.assessment.scoreId === filterId;
 }
 
+=======
+    nearestStop,
+    nearestRailStop,
+    nearestBusStop,
+    walkingMinutes: (nearestStop.distanceKm / WALKING_SPEED_KM_PER_HOUR) * 60,
+    availableRouteNames: Array.from(new Set((routesByStopId.get(nearestStop.stop.id) || []).map((route) => route.name))),
+    suggestedTransport: scoreId === 'poor' ? 'alternative' : 'public'
+  };
+}
+
+function getScoreId(distanceKm) {
+  if (distanceKm <= ACCESS_THRESHOLDS_KM.excellent) {
+    return 'excellent';
+  }
+
+  if (distanceKm <= ACCESS_THRESHOLDS_KM.moderate) {
+    return 'moderate';
+  }
+
+  return 'poor';
+}
+
+>>>>>>> 02eb3690a706c92e48c26f23adcf32750a142e3d
 function findNearestStop(spot, stops) {
   return stops
     .map((stop) => ({ stop, distanceKm: haversineDistanceKm(spot, stop) }))
     .sort((a, b) => a.distanceKm - b.distanceKm)[0] || null;
 }
 
+<<<<<<< HEAD
 function calculateWalkingMinutes(distanceKm) {
   return (distanceKm / WALKING_SPEED_KM_PER_HOUR) * 60;
+=======
+function matchesSearch(spot, searchText = '') {
+  if (!searchText) {
+    return true;
+  }
+
+  const search = searchText.toLowerCase();
+  const haystack = [spot.name, spot.meta.summary, ...(spot.meta.tags || [])]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase();
+
+  return haystack.includes(search);
+}
+
+function matchesFilter(spot, filterId) {
+  if (!filterId || filterId === 'all') {
+    return true;
+  }
+
+  if (['excellent', 'moderate', 'poor'].includes(filterId)) {
+    return spot.assessment.scoreId === filterId;
+  }
+
+  if (filterId === 'rail') {
+    return spot.assessment.nearestStop.stop.type === 'train';
+  }
+
+  if (filterId === 'bus') {
+    return spot.assessment.nearestStop.stop.type === 'bus';
+  }
+
+  return true;
+>>>>>>> 02eb3690a706c92e48c26f23adcf32750a142e3d
 }
 
 function toLatLng(item) {
