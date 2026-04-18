@@ -29,6 +29,10 @@ h1 {
   flex: 1;
 }
 
+#detail {
+  display: none;
+}
+
 .spot-item {
   padding: 10px;
   margin-bottom: 10px;
