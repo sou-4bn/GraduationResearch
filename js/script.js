@@ -3,8 +3,9 @@ const detail = document.getElementById("detail");
 let currentSpotName = null;
 const map = L.map("map");
 
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  attribution: "&copy; OpenStreetMap contributors"
+L.tileLayer("https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png", {
+  maxZoom: 20,
+  attribution: '&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>'
 }).addTo(map);
 
 // GeoJSONデータを読み込んで地図に表示
@@ -69,7 +70,13 @@ fetch("data/spots.json")
 
       spotList.appendChild(div);
 
-      L.marker([spot.lat, spot.lng])
+      L.circleMarker([spot.lat, spot.lng], {
+        radius: 8,
+        color: "#ffffff",
+        weight: 2,
+        fillColor: "#d97706",
+        fillOpacity: 1
+      })
         .addTo(map)
         .bindPopup(spot.name)
         .on("click", () => {

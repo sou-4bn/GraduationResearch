@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html lang="ja">
-<link
-  rel="stylesheet"
-  href="https://unpkg.com/leaflet/dist/leaflet.css"
-/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -12,6 +10,7 @@
 </head>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
 <body>
   <h1>観光アクセスガイド</h1>
 
@@ -22,10 +21,29 @@
     </aside>
 
     <main class="main-content">
-      <div id="map"></div>
+      <div class="map-wrapper">
+        <div id="map"></div>
+
+        <div class="map-legend">
+          <h3>凡例</h3>
+          <div class="legend-item">
+            <span class="legend-point legend-spot"></span>
+            <span>観光地</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-point legend-station"></span>
+            <span>駅</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-line legend-rail"></span>
+            <span>鉄道路線</span>
+          </div>
+        </div>
+      </div>
       <div id="detail"></div>
     </main>
   </div>
   <script src="js/script.js"></script>
 </body>
+
 </html>
