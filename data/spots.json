@@ -6,6 +6,7 @@
     "reason": "公共交通機関がなく、アクセスが非常に困難",
     "nearest": "なし",
     "alternative": "タクシー利用を推奨",
+    "image": "images/sample1.png",
     "lat": 39.10803319918925,
     "lng": 140.15929555655893,
     "metrics": {
@@ -24,6 +25,7 @@
     "reason": "公共交通機関がなく、アクセスが非常に困難",
     "nearest": "なし",
     "alternative": "タクシー利用を推奨",
+    "image": "images/sample2.png",
     "lat": 39.17299025422298,
     "lng": 140.04624151120456,
     "metrics": {
@@ -42,6 +44,7 @@
     "reason": "徒歩で移動可能",
     "nearest": "羽後本荘駅",
     "alternative": "不要",
+    "image": "images/sample3.png",
     "lat": 39.38471267927984,
     "lng": 140.0477778265553,
     "metrics": {

@@ -123,26 +123,32 @@ function showDetail(spot) {
   const badgeClass = getBadgeClass(spot.access);
 
   detail.innerHTML = `
-    <div class="detail-header">
-      <h2>${spot.name}</h2>
-      <span class="badge ${badgeClass}">${spot.access}</span>
-    </div>
+    <div class="detail-top">
+      ${spot.image ? `<img class="detail-image" src="${spot.image}" alt="${spot.name}">` : ""}
 
-    <p class="detail-description">${spot.description}</p>
-
-    <div class="detail-section">
-      <h3>概要</h3>
-      <div class="detail-grid">
-        <div class="detail-item">
-          <span class="detail-label">評価スコア</span>
-          <span class="detail-value">${spot.score}</span>
+      <div class="detail-main">
+        <div class="detail-header">
+          <h2>${spot.name}</h2>
+          <span class="badge ${badgeClass}">${spot.access}</span>
         </div>
-        <div class="detail-item">
-          <span class="detail-label">最寄り交通機関</span>
-          <span class="detail-value">${spot.nearest}</span>
+
+        <p class="detail-description">${spot.description}</p>
+
+        <div class="detail-section detail-section-compact">
+          <h3>概要</h3>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="detail-label">評価スコア</span>
+              <span class="detail-value">${spot.score}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">最寄り交通機関</span>
+              <span class="detail-value">${spot.nearest}</span>
+            </div>
+          </div>
+          <p class="detail-reason"><strong>理由：</strong>${spot.reason}</p>
         </div>
       </div>
-      <p class="detail-reason"><strong>理由：</strong>${spot.reason}</p>
     </div>
 
     <div class="detail-section">
