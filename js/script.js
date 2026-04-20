@@ -1,60 +1,3 @@
-const spots = [
-  {
-    name: "法体の滝",
-    description: "鳥海山の麓に位置し、三段にわたって流れ落ちるダイナミックな景観と映画のロケ地にもなった美しい自然が魅力の名瀑です。",
-    access: "×",
-    reason: "公共交通機関がなく、アクセスが非常に困難",
-    nearest: "なし",
-    alternative: "タクシー利用を推奨",
-    lat: 39.10803319918925,
-    lng: 140.15929555655893,
-    metrics: {
-      invehicle: 39,
-      wait: 115,
-      walk: 310,
-      transfer: 0,
-      maxWait: 0
-    },
-    score: 734
-  },
-  {
-    name: "桑ノ木台湿原",
-    description: "鳥海山の山麓に広がる広大な湿原で、初夏のレンゲツツジや秋の草紅葉など、季節ごとに移ろう神秘的な絶景を堪能できる由利本荘市屈指の景勝地です。",
-    access: "×",
-    reason: "公共交通機関がなく、アクセスが非常に困難",
-    nearest: "なし",
-    alternative: "タクシー利用を推奨",
-    lat: 39.17299025422298,
-    lng: 140.04624151120456,
-    metrics: {
-      invehicle: 39,
-      wait: 115,
-      walk: 244,
-      transfer: 0,
-      maxWait: 0
-    },
-    score: 635
-  },
-  {
-    name: "本荘公園",
-    description: "本荘藩主六郷氏の居城であった本荘城跡に広がる公園で、春には約1,000本の桜やツツジが咲き誇り、歴史の面影を感じながら四季折々の散策を楽しめる由利本荘市のシンボル的スポットです。",
-    access: "〇",
-    reason: "徒歩で移動可能",
-    nearest: "羽後本荘駅",
-    alternative: "不要",
-    lat: 39.38471267927984,
-    lng: 140.0477778265553,
-    metrics: {
-      invehicle: 0,
-      wait: 0,
-      walk: 12,
-      transfer: 0,
-      maxWait: 0
-    },
-    score: 18
-  }
-];
-
 const spotList = document.getElementById("spotList");
 const detail = document.getElementById("detail");
 let currentSpotName = null;
@@ -99,41 +42,69 @@ fetch("data/railway.geojson")
     console.error("鉄道路線データの読み込みに失敗しました:", error);
   });
 
-spots.forEach((spot) => {
-  const div = document.createElement("div");
-  div.className = "spot-item";
-  const badgeClass = getBadgeClass(spot.access);
+// 観光地データを読み込んでリストと地図に表示
+fetch("data/spots.json")
+  .then((response) => response.json())
+  .then((spots) => {
+    spots.forEach((spot) => {
+      const div = document.createElement("div");
+      div.className = "spot-item";
+      const badgeClass = getBadgeClass(spot.access);
 
-  div.innerHTML = `
-    <div class="spot-row">
-      <span>${spot.name}</span>
-      <span class="badge ${badgeClass}">${spot.access}</span>
-    </div>
-  `;
+      div.innerHTML = `
+        <div class="spot-row">
+          <span>${spot.name}</span>
+          <span class="badge ${badgeClass}">${spot.access}</span>
+        </div>
+      `;
 
-  div.addEventListener("click", () => {
-    if (detail.style.display === "block" && currentSpotName === spot.name) {
-      detail.style.display = "none";
-      currentSpotName = null;
-    } else {
-      showDetail(spot);
-    }
+      div.addEventListener("click", () => {
+        if (detail.style.display === "block" && currentSpotName === spot.name) {
+          detail.style.display = "none";
+          currentSpotName = null;
+        } else {
+          showDetail(spot);
+        }
+      });
+
+      spotList.appendChild(div);
+
+      L.marker([spot.lat, spot.lng])
+        .addTo(map)
+        .bindPopup(spot.name)
+        .on("click", () => {
+          if (detail.style.display === "block" && currentSpotName === spot.name) {
+            detail.style.display = "none";
+            currentSpotName = null;
+          } else {
+            showDetail(spot);
+          }
+        });
+    });
+  })
+  .catch((error) => {
+    console.error("spots.json の読み込みに失敗しました:", error);
   });
 
-  spotList.appendChild(div);
-
-  L.marker([spot.lat, spot.lng])
-    .addTo(map)
-    .bindPopup(spot.name)
-    .on("click", () => {
-      if (detail.style.display === "block" && currentSpotName === spot.name) {
-        detail.style.display = "none";
-        currentSpotName = null;
-      } else {
-        showDetail(spot);
-      }
+// 駅データを読み込んで地図に表示
+fetch("data/stations.json")
+  .then((response) => response.json())
+  .then((stations) => {
+    stations.forEach((station) => {
+      L.circleMarker([station.lat, station.lng], {
+        radius: 4,
+        color: "#000000",
+        fillColor: "#000000",
+        fillOpacity: 1,
+        weight: 1
+      })
+        .addTo(map)
+        .bindPopup(station.name);
     });
-});
+  })
+  .catch((error) => {
+    console.error("stations.json の読み込みに失敗しました:", error);
+  });
 
 function getBadgeClass(access) {
   if (access === "〇") {
@@ -165,3 +136,4 @@ function showDetail(spot) {
   `;
   currentSpotName = spot.name;
 }
+
