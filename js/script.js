@@ -57,6 +57,7 @@ const spots = [
 
 const spotList = document.getElementById("spotList");
 const detail = document.getElementById("detail");
+let currentSpotName = null;
 const map = L.map("map").setView([39.38586, 140.04883], 10);
 
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -76,8 +77,9 @@ spots.forEach((spot) => {
   `;
 
   div.addEventListener("click", () => {
-    if (detail.style.display === "block") {
+    if (detail.style.display === "block" && currentSpotName === spot.name) {
       detail.style.display = "none";
+      currentSpotName = null;
     } else {
       showDetail(spot);
     }
@@ -89,8 +91,9 @@ spots.forEach((spot) => {
     .addTo(map)
     .bindPopup(spot.name)
     .on("click", () => {
-      if (detail.style.display === "block") {
+      if (detail.style.display === "block" && currentSpotName === spot.name) {
         detail.style.display = "none";
+        currentSpotName = null;
       } else {
         showDetail(spot);
       }
@@ -125,4 +128,5 @@ function showDetail(spot) {
     <p><strong>最長待ち時間：</strong>${spot.metrics.maxWait}分</p>
     <p><strong>代替手段：</strong>${spot.alternative}</p>
   `;
+  currentSpotName = spot.name;
 }
