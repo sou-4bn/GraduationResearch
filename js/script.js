@@ -119,21 +119,63 @@ function getBadgeClass(access) {
 // 詳細を表示する関数
 function showDetail(spot) {
   detail.style.display = "block";
+
+  const badgeClass = getBadgeClass(spot.access);
+
   detail.innerHTML = `
-    <h2>${spot.name}</h2>
-    <p>${spot.description}</p>
-    <p>
-      <strong>評価スコア：</strong>${spot.score}
-    </p>
-    <p><strong>理由：</strong>${spot.reason}</p>
-    <p><strong>最寄り交通機関：</strong>${spot.nearest}</p>
-    <p><strong>乗車時間：</strong>${spot.metrics.invehicle}分</p>
-    <p><strong>待ち時間：</strong>${spot.metrics.wait}分</p>
-    <p><strong>徒歩時間：</strong>${spot.metrics.walk}分</p>
-    <p><strong>乗り換え回数：</strong>${spot.metrics.transfer}回</p>
-    <p><strong>最長待ち時間：</strong>${spot.metrics.maxWait}分</p>
-    <p><strong>代替手段：</strong>${spot.alternative}</p>
+    <div class="detail-header">
+      <h2>${spot.name}</h2>
+      <span class="badge ${badgeClass}">${spot.access}</span>
+    </div>
+
+    <p class="detail-description">${spot.description}</p>
+
+    <div class="detail-section">
+      <h3>概要</h3>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <span class="detail-label">評価スコア</span>
+          <span class="detail-value">${spot.score}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">最寄り交通機関</span>
+          <span class="detail-value">${spot.nearest}</span>
+        </div>
+      </div>
+      <p class="detail-reason"><strong>理由：</strong>${spot.reason}</p>
+    </div>
+
+    <div class="detail-section">
+      <h3>アクセス指標</h3>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <span class="detail-label">乗車時間</span>
+          <span class="detail-value">${spot.metrics.invehicle}分</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">待ち時間</span>
+          <span class="detail-value">${spot.metrics.wait}分</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">徒歩時間</span>
+          <span class="detail-value">${spot.metrics.walk}分</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">乗り換え回数</span>
+          <span class="detail-value">${spot.metrics.transfer}回</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">最長待ち時間</span>
+          <span class="detail-value">${spot.metrics.maxWait}分</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <h3>代替手段</h3>
+      <p class="detail-alternative">${spot.alternative}</p>
+    </div>
   `;
+
   currentSpotName = spot.name;
 }
-
