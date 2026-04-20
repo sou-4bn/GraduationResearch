@@ -83,6 +83,22 @@ fetch("data/yurihonjo.geojson")
     console.error("境界データの読み込みに失敗しました:", error);
   });
 
+// 鉄道路線のGeoJSONデータを読み込んで地図に表示
+fetch("data/railway.geojson")
+  .then((response) => response.json())
+  .then((data) => {
+    L.geoJSON(data, {
+      style: {
+        color: "#222222",
+        weight: 2,
+        opacity: 0.8
+      }
+    }).addTo(map);
+  })
+  .catch((error) => {
+    console.error("鉄道路線データの読み込みに失敗しました:", error);
+  });
+
 spots.forEach((spot) => {
   const div = document.createElement("div");
   div.className = "spot-item";
