@@ -58,11 +58,30 @@ const spots = [
 const spotList = document.getElementById("spotList");
 const detail = document.getElementById("detail");
 let currentSpotName = null;
-const map = L.map("map").setView([39.38586, 140.04883], 10);
+const map = L.map("map");
 
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution: "&copy; OpenStreetMap contributors"
 }).addTo(map);
+
+// GeoJSONデータを読み込んで地図に表示
+fetch("data/yurihonjo.geojson")
+  .then((response) => response.json())
+  .then((data) => {
+    const boundaryLayer = L.geoJSON(data, {
+      style: {
+        color: "#5f7f73",
+        weight: 2,
+        fillColor: "#a8c3b8",
+        fillOpacity: 0.06
+      }
+    }).addTo(map);
+
+    map.fitBounds(boundaryLayer.getBounds());
+  })
+  .catch((error) => {
+    console.error("境界データの読み込みに失敗しました:", error);
+  });
 
 spots.forEach((spot) => {
   const div = document.createElement("div");
