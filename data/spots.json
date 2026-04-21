@@ -1,12 +1,13 @@
 [
   {
     "name": "法体の滝",
+    "category": "自然",
     "description": "鳥海山の麓に位置し、三段にわたって流れ落ちるダイナミックな景観と映画のロケ地にもなった美しい自然が魅力の名瀑です。",
     "access": "×",
     "reason": "公共交通機関がなく、アクセスが非常に困難",
     "nearest": "なし",
     "alternative": "タクシー利用を推奨",
-    "image": "images/sample1.png",
+    "image": "images/sample.png",
     "lat": 39.10803319918925,
     "lng": 140.15929555655893,
     "metrics": {
@@ -20,12 +21,13 @@
   },
   {
     "name": "桑ノ木台湿原",
+    "category": "自然",
     "description": "鳥海山の山麓に広がる広大な湿原で、初夏のレンゲツツジや秋の草紅葉など、季節ごとに移ろう神秘的な絶景を堪能できる由利本荘市屈指の景勝地です。",
     "access": "×",
     "reason": "公共交通機関がなく、アクセスが非常に困難",
     "nearest": "なし",
     "alternative": "タクシー利用を推奨",
-    "image": "images/sample2.png",
+    "image": "images/sample.png",
     "lat": 39.17299025422298,
     "lng": 140.04624151120456,
     "metrics": {
@@ -39,12 +41,13 @@
   },
   {
     "name": "本荘公園",
+    "category": "歴史・文化",
     "description": "本荘藩主六郷氏の居城であった本荘城跡に広がる公園で、春には約1,000本の桜やツツジが咲き誇り、歴史の面影を感じながら四季折々の散策を楽しめる由利本荘市のシンボル的スポットです。",
     "access": "〇",
     "reason": "徒歩で移動可能",
     "nearest": "羽後本荘駅",
     "alternative": "不要",
-    "image": "images/sample3.png",
+    "image": "images/sample.png",
     "lat": 39.38471267927984,
     "lng": 140.0477778265553,
     "metrics": {
@@ -55,5 +58,45 @@
       "maxWait": 0
     },
     "score": 18
+  },
+  {
+    "name": "天鷺村",
+    "category": "歴史・文化",
+    "description": "天鷺村は、旧亀田藩の歴史と文化を今に伝える施設群が集まり、武家屋敷や資料館、伝統工芸体験を通して城下町の暮らしにふれられる歴史観光スポットです。",
+    "access": "×",
+    "reason": "公共交通機関の待ち時間が長く、アクセスが不便",
+    "nearest": "羽後亀田駅",
+    "alternative": "タクシー利用を推奨",
+    "image": "images/sample.png",
+    "lat": 39.50032124058119,
+    "lng": 140.0842785300642,
+    "metrics": {
+      "invehicle": 14,
+      "wait": 109,
+      "walk": 38,
+      "transfer": 0,
+      "maxWait": 0
+    },
+    "score": 289
+  },
+  {
+    "name": "鳥海山木のおもちゃ館",
+    "category": "公園・レジャー",
+    "description": "鳥海山木のおもちゃ館は、国登録有形文化財の旧鮎川小学校を活用し、地元産の木のおもちゃや大型遊具を通して子どもから大人まで木のぬくもりを楽しめる多世代交流型の木育施設です。",
+    "access": "×",
+    "reason": "公共交通機関の待ち時間が長く、アクセスが不便",
+    "nearest": "鮎川駅",
+    "alternative": "タクシー利用を推奨",
+    "image": "images/sample.png",
+    "lat": 39.333803414928035,
+    "lng": 140.065804228461,
+    "metrics": {
+      "invehicle": 11,
+      "wait": 115,
+      "walk": 23,
+      "transfer": 0,
+      "maxWait": 0
+    },
+    "score": 276
   }
 ]

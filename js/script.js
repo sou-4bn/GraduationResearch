@@ -4,6 +4,7 @@ const filterToggleButton = document.getElementById("filterToggleButton");
 const filterPanel = document.getElementById("filterPanel");
 const searchInput = document.getElementById("searchInput");
 const accessFilter = document.getElementById("accessFilter");
+const categoryFilter = document.getElementById("categoryFilter");
 let currentSpotName = null;
 let allSpots = [];
 const map = L.map("map");
@@ -155,12 +156,14 @@ function renderSpotList(spots) {
 function applyFilters() {
   const keyword = searchInput.value.trim().toLowerCase();
   const selectedAccess = accessFilter.value;
+  const selectedCategory = categoryFilter.value;
 
   const filteredSpots = allSpots.filter((spot) => {
     const matchesKeyword = spot.name.toLowerCase().includes(keyword);
     const matchesAccess = selectedAccess === "all" || spot.access === selectedAccess;
+    const matchesCategory = selectedCategory === "all" || spot.category === selectedCategory;
 
-    return matchesKeyword && matchesAccess;
+    return matchesKeyword && matchesAccess && matchesCategory;
   });
 
   renderSpotList(filteredSpots);
@@ -171,6 +174,9 @@ searchInput.addEventListener("input", applyFilters);
 
 // アクセス指標が変更されたら絞り込みを実行
 accessFilter.addEventListener("change", applyFilters);
+
+// カテゴリが変更されたら絞り込みを実行
+categoryFilter.addEventListener("change", applyFilters);
 
 // 詳細を非表示にする関数
 function hideDetail() {
@@ -185,7 +191,7 @@ function hideDetail() {
 // 詳細を表示する関数
 function showDetail(spot) {
   detail.style.display = "block";
-  map.setView([spot.lat, spot.lng], 12);
+  map.setView([spot.lat, spot.lng], 13);
 
   document.querySelectorAll(".spot-item").forEach((item) => {
     item.classList.remove("active");
