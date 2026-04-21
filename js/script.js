@@ -5,6 +5,8 @@ const filterPanel = document.getElementById("filterPanel");
 const searchInput = document.getElementById("searchInput");
 const accessFilter = document.getElementById("accessFilter");
 const categoryFilter = document.getElementById("categoryFilter");
+const seasonFilter = document.getElementById("seasonFilter");
+const resetFiltersButton = document.getElementById("resetFiltersButton");
 let currentSpotName = null;
 let allSpots = [];
 const map = L.map("map");
@@ -125,6 +127,11 @@ function getBadgeClass(access) {
 function renderSpotList(spots) {
   spotList.innerHTML = "";
 
+  if (spots.length === 0) {
+    spotList.innerHTML = "<p class='empty-message'>該当する観光地がありません。</p>";
+    return;
+  }
+
   spots.forEach((spot) => {
     const div = document.createElement("div");
     div.className = "spot-item";
@@ -157,13 +164,15 @@ function applyFilters() {
   const keyword = searchInput.value.trim().toLowerCase();
   const selectedAccess = accessFilter.value;
   const selectedCategory = categoryFilter.value;
+  const selectedSeason = seasonFilter.value;
 
   const filteredSpots = allSpots.filter((spot) => {
     const matchesKeyword = spot.name.toLowerCase().includes(keyword);
     const matchesAccess = selectedAccess === "all" || spot.access === selectedAccess;
     const matchesCategory = selectedCategory === "all" || spot.category === selectedCategory;
+    const matchesSeason = selectedSeason === "all" || spot.seasons.includes(selectedSeason);
 
-    return matchesKeyword && matchesAccess && matchesCategory;
+    return matchesKeyword && matchesAccess && matchesCategory && matchesSeason;
   });
 
   renderSpotList(filteredSpots);
@@ -177,6 +186,18 @@ accessFilter.addEventListener("change", applyFilters);
 
 // カテゴリが変更されたら絞り込みを実行
 categoryFilter.addEventListener("change", applyFilters);
+
+// おすすめ季節が変更されたら絞り込みを実行
+seasonFilter.addEventListener("change", applyFilters);
+
+// リセットボタンが押されたら、検索・絞り込み条件を初期化する
+resetFilterButton.addEventListener("click", () => {
+  searchInput.value = "";
+  accessFilter.value = "all";
+  categoryFilter.value = "all";
+  seasonFilter.value = "all";
+  applyFilters();
+});
 
 // 詳細を非表示にする関数
 function hideDetail() {

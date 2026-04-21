@@ -35,9 +35,9 @@ h1 {
   width: 100%;
   margin-bottom: 12px;
   padding: 10px 12px;
-  border: 1px solid #ccc;
+  border: 1px solid #b9cdc0;
   border-radius: 8px;
-  background-color: #ffffff;
+  background-color: #edf5f0;
   cursor: pointer;
   font-size: 14px;
 }
@@ -48,6 +48,10 @@ h1 {
 
 .filter-panel {
   margin-bottom: 12px;
+  padding: 12px;
+  border: 1px solid #d8e4dc;
+  border-radius: 10px;
+  background-color: #f4f8f5;
 }
 
 .filter-panel input,
@@ -64,6 +68,21 @@ h1 {
 .filter-panel input:last-child,
 .filter-panel select:last-child {
   margin-bottom: 0;
+}
+
+#resetFilterButton {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d8caca;
+  border-radius: 8px;
+  background-color: #faf5f5;
+  cursor: pointer;
+  font-size: 14px;
+  color: #6b4f4f;
+}
+
+#resetFilterButton:hover {
+  background-color: #f5ecec;
 }
 
 .main-content {
@@ -169,6 +188,13 @@ h1 {
 
 .spot-item:hover {
   background-color: #f0f0f0;
+}
+
+.empty-message {
+  margin: 12px 0;
+  color: #666;
+  font-size: 14px;
+  text-align: center;
 }
 
 .detail p {
