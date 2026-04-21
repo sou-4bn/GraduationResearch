@@ -2,7 +2,10 @@ const spotList = document.getElementById("spotList");
 const detail = document.getElementById("detail");
 const filterToggleButton = document.getElementById("filterToggleButton");
 const filterPanel = document.getElementById("filterPanel");
+const searchInput = document.getElementById("searchInput");
+const accessFilter = document.getElementById("accessFilter");
 let currentSpotName = null;
+let allSpots = [];
 const map = L.map("map");
 
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -54,50 +57,32 @@ fetch("data/spots.json")
   .then((response) => response.json())
   .then((spots) => {
     spots.forEach((spot) => {
-      const div = document.createElement("div");
-      div.className = "spot-item";
-      div.dataset.spotName = spot.name;
-      const badgeClass = getBadgeClass(spot.access);
+      allSpots = spots;
+      renderSpotList(allSpots);
 
-      div.innerHTML = `
-        <div class="spot-row">
-          <span>${spot.name}</span>
-          <span class="badge ${badgeClass}">${spot.access}</span>
-        </div>
-      `;
-
-      div.addEventListener("click", () => {
-        const isSameSpotOpen = detail.style.display === "block" && currentSpotName === spot.name;
-        if (isSameSpotOpen) {
-          hideDetail();
-        } else {
-          showDetail(spot);
-        }
+      spots.forEach((spot) => {
+        L.circleMarker([spot.lat, spot.lng], {
+          radius: 8,
+          color: "#ffffff",
+          weight: 2,
+          fillColor: "#d97706",
+          fillOpacity: 1
+        })
+          .addTo(map)
+          .bindPopup(spot.name)
+          .on("click", () => {
+            const isSameSpotOpen = detail.style.display === "block" && currentSpotName === spot.name;
+            if (isSameSpotOpen) {
+              hideDetail();
+            } else {
+              showDetail(spot);
+            }
+          });
       });
-
-      spotList.appendChild(div);
-
-      L.circleMarker([spot.lat, spot.lng], {
-        radius: 8,
-        color: "#ffffff",
-        weight: 2,
-        fillColor: "#d97706",
-        fillOpacity: 1
-      })
-        .addTo(map)
-        .bindPopup(spot.name)
-        .on("click", () => {
-          const isSameSpotOpen = detail.style.display === "block" && currentSpotName === spot.name;
-          if (isSameSpotOpen) {
-            hideDetail();
-          } else {
-            showDetail(spot);
-          }
-        });
-    });
-  })
-  .catch((error) => {
-    console.error("spots.json の読み込みに失敗しました:", error);
+    })
+      .catch((error) => {
+        console.error("spots.json の読み込みに失敗しました:", error);
+      });
   });
 
 // 駅データを読み込んで地図に表示
@@ -124,6 +109,7 @@ filterToggleButton.addEventListener("click", () => {
   filterPanel.hidden = !filterPanel.hidden;
 });
 
+// アクセス指標の値に応じてバッジのクラスを返す関数
 function getBadgeClass(access) {
   if (access === "〇") {
     return "good";
@@ -133,6 +119,48 @@ function getBadgeClass(access) {
   }
   return "bad";
 }
+
+// 観光地一覧を描画する関数
+function renderSpotList(spots) {
+  spotList.innerHTML = "";
+
+  spots.forEach((spot) => {
+    const div = document.createElement("div");
+    div.className = "spot-item";
+    div.dataset.spotName = spot.name;
+    const badgeClass = getBadgeClass(spot.access);
+
+    div.innerHTML = `
+      <div class="spot-row">
+        <span>${spot.name}</span>
+        <span class="badge ${badgeClass}">${spot.access}</span>
+      </div>
+    `;
+
+    div.addEventListener("click", () => {
+      const isSameSpotOpen = detail.style.display === "block" && currentSpotName === spot.name;
+
+      if (isSameSpotOpen) {
+        hideDetail();
+      } else {
+        showDetail(spot);
+      }
+    });
+
+    spotList.appendChild(div);
+  });
+}
+
+// 検索欄に入力された文字で、観光地一覧を絞り込む
+searchInput.addEventListener("input", () => {
+  const keyword = searchInput.value.trim().toLowerCase();
+
+  const filteredSpots = allSpots.filter((spot) => {
+    return spot.name.toLowerCase().includes(keyword);
+  });
+
+  renderSpotList(filteredSpots);
+});
 
 // 詳細を非表示にする関数
 function hideDetail() {
