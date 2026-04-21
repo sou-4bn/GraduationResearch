@@ -54,6 +54,7 @@ fetch("data/spots.json")
     spots.forEach((spot) => {
       const div = document.createElement("div");
       div.className = "spot-item";
+      div.dataset.spotName = spot.name;
       const badgeClass = getBadgeClass(spot.access);
 
       div.innerHTML = `
@@ -64,9 +65,9 @@ fetch("data/spots.json")
       `;
 
       div.addEventListener("click", () => {
-        if (detail.style.display === "block" && currentSpotName === spot.name) {
-          detail.style.display = "none";
-          currentSpotName = null;
+        const isSameSpotOpen = detail.style.display === "block" && currentSpotName === spot.name;
+        if (isSameSpotOpen) {
+          hideDetail();
         } else {
           showDetail(spot);
         }
@@ -84,9 +85,9 @@ fetch("data/spots.json")
         .addTo(map)
         .bindPopup(spot.name)
         .on("click", () => {
-          if (detail.style.display === "block" && currentSpotName === spot.name) {
-            detail.style.display = "none";
-            currentSpotName = null;
+          const isSameSpotOpen = detail.style.display === "block" && currentSpotName === spot.name;
+          if (isSameSpotOpen) {
+            hideDetail();
           } else {
             showDetail(spot);
           }
@@ -127,9 +128,30 @@ function getBadgeClass(access) {
   return "bad";
 }
 
+// 詳細を非表示にする関数
+function hideDetail() {
+  detail.style.display = "none";
+  currentSpotName = null;
+
+  document.querySelectorAll(".spot-item").forEach((item) => {
+    item.classList.remove("active");
+  });
+}
+
 // 詳細を表示する関数
 function showDetail(spot) {
   detail.style.display = "block";
+  map.setView([spot.lat, spot.lng], 12);
+
+  document.querySelectorAll(".spot-item").forEach((item) => {
+    item.classList.remove("active");
+  });
+
+  const activeItem = document.querySelector(`.spot-item[data-spot-name="${spot.name}"]`);
+  if (activeItem) {
+    activeItem.classList.add("active");
+    activeItem.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
 
   const badgeClass = getBadgeClass(spot.access);
 

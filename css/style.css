@@ -127,6 +127,11 @@ h1 {
   background-color: #fafafa;
 }
 
+.spot-item.active {
+  background-color: #f3f0e8;
+  border-left: 8px solid #d97706;
+}
+
 .spot-item:hover {
   background-color: #f0f0f0;
 }
