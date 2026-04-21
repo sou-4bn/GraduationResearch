@@ -151,16 +151,26 @@ function renderSpotList(spots) {
   });
 }
 
-// 検索欄に入力された文字で、観光地一覧を絞り込む
-searchInput.addEventListener("input", () => {
+// 観光地一覧を絞り込む
+function applyFilters() {
   const keyword = searchInput.value.trim().toLowerCase();
+  const selectedAccess = accessFilter.value;
 
   const filteredSpots = allSpots.filter((spot) => {
-    return spot.name.toLowerCase().includes(keyword);
+    const matchesKeyword = spot.name.toLowerCase().includes(keyword);
+    const matchesAccess = selectedAccess === "all" || spot.access === selectedAccess;
+
+    return matchesKeyword && matchesAccess;
   });
 
   renderSpotList(filteredSpots);
-});
+}
+
+// 検索欄に入力があったら絞り込みを実行
+searchInput.addEventListener("input", applyFilters);
+
+// アクセス指標が変更されたら絞り込みを実行
+accessFilter.addEventListener("change", applyFilters);
 
 // 詳細を非表示にする関数
 function hideDetail() {
