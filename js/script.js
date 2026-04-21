@@ -1,5 +1,7 @@
 const spotList = document.getElementById("spotList");
 const detail = document.getElementById("detail");
+const filterToggleButton = document.getElementById("filterToggleButton");
+const filterPanel = document.getElementById("filterPanel");
 let currentSpotName = null;
 const map = L.map("map");
 
@@ -117,6 +119,10 @@ fetch("data/stations.json")
   .catch((error) => {
     console.error("stations.json の読み込みに失敗しました:", error);
   });
+
+filterToggleButton.addEventListener("click", () => {
+  filterPanel.hidden = !filterPanel.hidden;
+});
 
 function getBadgeClass(access) {
   if (access === "〇") {

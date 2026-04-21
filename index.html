@@ -15,6 +15,20 @@
   <div class="container">
     <aside class="spot-list">
       <h2>観光地一覧</h2>
+
+      <button id="filterToggleButton" class="filter-toggle-button">絞り込み・検索</button>
+
+      <div id="filterPanel" class="filter-panel" hidden>
+        <input type="text" id="searchInput" placeholder="観光地名で検索" />
+
+        <select id="accessFilter">
+          <option value="all">アクセス指標: すべて</option>
+          <option value="〇">アクセス指標: 〇</option>
+          <option value="△">アクセス指標: △</option>
+          <option value="×">アクセス指標: ×</option>
+        </select>
+      </div>
+      
       <div id="spotList"></div>
     </aside>
 

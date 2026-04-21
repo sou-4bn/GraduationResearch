@@ -31,6 +31,41 @@ h1 {
   font-size: 18px;
 }
 
+.filter-toggle-button {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #ffffff;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.filter-toggle-button:hover {
+  background-color: #f7f7f7;
+}
+
+.filter-panel {
+  margin-bottom: 12px;
+}
+
+.filter-panel input,
+.filter-panel select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.filter-panel input:last-child,
+.filter-panel select:last-child {
+  margin-bottom: 0;
+}
+
 .main-content {
   flex: 1;
   display: flex;
