@@ -65,7 +65,7 @@ fetch("data/spots.json")
 
       spots.forEach((spot) => {
         L.circleMarker([spot.lat, spot.lng], {
-          radius: 8,
+          radius: 10,
           color: "#ffffff",
           weight: 2,
           fillColor: "#d97706",
@@ -283,7 +283,20 @@ function showDetail(spot) {
 
     <div class="detail-section">
       <h3>代替手段</h3>
-      <p class="detail-alternative">${spot.alternative}</p>
+      ${
+        spot.alternative === "taxi"
+          ? `
+            <p class="detail-alternative">タクシー</p>
+            <ul class="taxi-contact-list">
+              ${spot.taxiContacts.map((contact) => `
+                <li>${contact.name}：${contact.tel}</li>
+              `).join("")}
+            </ul>
+          `
+          : spot.alternative === "rental_car"
+            ? `<p class="detail-alternative">レンタカー</p>`
+            : `<p class="detail-alternative">不要</p>`
+      }
     </div>
   `;
 
