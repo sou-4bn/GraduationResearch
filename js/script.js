@@ -1,5 +1,6 @@
 const spotList = document.getElementById("spotList");
 const detail = document.getElementById("detail");
+const menuToggleButton = document.getElementById("menuToggleButton");
 const filterToggleButton = document.getElementById("filterToggleButton");
 const filterPanel = document.getElementById("filterPanel");
 const searchInput = document.getElementById("searchInput");
@@ -108,6 +109,20 @@ fetch("data/stations.json")
     console.error("stations.json の読み込みに失敗しました:", error);
   });
 
+menuToggleButton.addEventListener("click", () => {
+  event.stopPropagation();
+  spotSidebar.classList.toggle("is-open");
+});
+
+document.addEventListener("click", (event) => {
+  const clickedInsideSidebar = spotSidebar.contains(event.target);
+  const clickedMenuButton = menuToggleButton.contains(event.target);
+
+  if (!clickedInsideSidebar && !clickedMenuButton) {
+    spotSidebar.classList.remove("is-open");
+  }
+});
+
 filterToggleButton.addEventListener("click", () => {
   filterPanel.hidden = !filterPanel.hidden;
 });
@@ -153,6 +168,8 @@ function renderSpotList(spots) {
       } else {
         showDetail(spot);
       }
+
+      spotSidebar.classList.remove("is-open");
     });
 
     spotList.appendChild(div);
@@ -283,20 +300,22 @@ function showDetail(spot) {
 
     <div class="detail-section">
       <h3>代替手段</h3>
-      ${
-        spot.alternative === "taxi"
-          ? `
+      ${spot.alternative === "taxi"
+      ? `
             <p class="detail-alternative">タクシー</p>
             <ul class="taxi-contact-list">
               ${spot.taxiContacts.map((contact) => `
-                <li>${contact.name}：${contact.tel}</li>
+                <li>
+                  ${contact.name}：
+                  <a href="tel:${contact.tel}" class="taxi-tel-link">${contact.tel}</a>
+                </li>
               `).join("")}
             </ul>
           `
-          : spot.alternative === "rental_car"
-            ? `<p class="detail-alternative">レンタカー</p>`
-            : `<p class="detail-alternative">不要</p>`
-      }
+      : spot.alternative === "rental_car"
+        ? `<p class="detail-alternative">レンタカー</p>`
+        : `<p class="detail-alternative">不要</p>`
+    }
     </div>
   `;
 
