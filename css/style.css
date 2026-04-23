@@ -7,8 +7,15 @@ body {
 }
 
 h1 {
-  margin: 0 0 20px 72px;
+  margin: 0;
   font-size: 28px;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
 }
 
 .container {
@@ -18,10 +25,6 @@ h1 {
 }
 
 .menu-toggle-button {
-  position: fixed;
-  top: 24px;
-  left: 24px;
-  z-index: 2000;
   width: 48px;
   height: 48px;
   border: 1px solid #999;
@@ -38,13 +41,14 @@ h1 {
   position: absolute;
   top: 0;
   left: 0;
+  border-radius: 0 16px 16px 0;
   z-index: 1100;
   width: 320px;
   height: 100%;
   padding: 16px;
   box-sizing: border-box;
-  border-right: 1px solid #ddd;
-  background-color: #ffffff;
+  background-color: #fcfcfc;
+  box-shadow: 4px 0 16px rgba(0, 0, 0, 0.08);
   overflow-y: auto;
   transform: translateX(calc(-100% - 24px));
   transition: transform 0.25s ease;
