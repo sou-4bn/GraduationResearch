@@ -261,32 +261,6 @@ h1 {
   gap: 8px;
 }
 
-@media (max-width: 768px) {
-  .detail-top {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .detail-image {
-    height: 200px;
-    margin-bottom: 0;
-  }
-
-  .detail-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
-  .detail-grid {
-    grid-template-columns: 1fr;
-  }
-
-  #detail {
-    padding: 12px;
-  }
-}
-
 .detail-top {
   display: grid;
   grid-template-columns: 320px 1fr;
@@ -394,4 +368,30 @@ h1 {
 
 .taxi-tel-link:hover {
   text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .detail-top {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .detail-image {
+    height: 200px;
+    margin-bottom: 0;
+  }
+
+  .detail-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  #detail {
+    padding: 12px;
+  }
 }
