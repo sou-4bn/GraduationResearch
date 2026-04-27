@@ -11,9 +11,24 @@ h1 {
   font-size: 28px;
 }
 
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.controls label {
+  font-weight: bold;
+}
+
+.controls input[type="range"] {
+  width: 240px;
+}
+
 #map {
   width: 100%;
-  height: calc(100vh - 100px);
+  height: calc(100vh - 150px);
   border: 1px solid #ccc;
   border-radius: 12px;
   background-color: white;
