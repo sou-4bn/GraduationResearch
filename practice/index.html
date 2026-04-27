@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>軌跡データ練習</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <h1>秋田市 軌跡データ練習</h1>
+
+    <div class="controls">
+        <label for="simplifyRange">単純度</label>
+        <input type="range" id="simplifyRange" min="1" max="20" value="1" />
+        <span id="simplifyValue">1</span>
+    </div>
+    
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
